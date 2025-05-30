@@ -12,78 +12,100 @@ const p2_img = document.querySelector('#card2 > #img');
 const p2_poke_name = document.querySelector('#card2 > #name');
 const p2_experience = document.querySelector('#card2 > #experience');
 const p2_abilities = document.querySelector('#card2 > #abilities');
-
-const fightBtn = document.querySelector('#fight');
-let p1score =0;
-let p2score =0;
-fightBtn.addEventListener('click',()=>{
-    
-    fetch('https://pokeapi.co/api/v2/pokemon/')
-    .then((res) => {
-        return res.json()
-    })
-    .then((data) => {
-        const number1 = Math.floor(Math.random()*19) + 1
-        const number2 = Math.floor(Math.random()*19) +1
-        console.log(data.results[number1])
-        if(number1== number2){
-            number1--
-            number2++
+const container = document.querySelector("#container");
+const fightBtn = document.querySelector("#fight");
+let p1score = 0;
+let p2score = 0;
+let count = 1;
+fightBtn.addEventListener("click", () => {
+  if (count > 9) {
+    if (p1score > p2score) {
+      const winner = document.createElement("h1");
+      container.innerHTML = '';
+      winner.textContent = `Player 1 Wins`;
+      container.appendChild(winner);
+      fightBtn.style.display = 'none';
+    } else {
+      const winner = document.createElement("h1");
+      container.innerHTML = '';
+      winner.textContent = `Player 2 Wins`;
+      container.appendChild(winner);
+      fightBtn.style.display = 'none';
+    }
+  } else {
+    count++;
+    fetch("https://pokeapi.co/api/v2/pokemon/")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        const number1 = Math.floor(Math.random() * 19) + 1;
+        const number2 = Math.floor(Math.random() * 19) + 1;
+        console.log(data.results[number1]);
+        if (number1 == number2) {
+          number1--;
+          number2++;
         }
-        p1_name.textContent = 'John'
-        p2_name.textContent = 'Alice'
+        p1_name.textContent = "John (player 1)";
+        p2_name.textContent = "Alice (player 2)";
         fetch(data.results[number1].url)
-        .then((res2) => res2.json())
-        .then((data2) => {
-            console.log(data2)
-            p1_abilities.textContent = ''
-            for(let i =0;i<data2.abilities.length;i++){
-                const li = document.createElement('li')
-                li.textContent = data2.abilities[i].ability.name
-                p1_abilities.appendChild(li)
+          .then((res2) => res2.json())
+          .then((data2) => {
+            console.log(data2);
+            p1_abilities.textContent = "";
+            for (let i = 0; i < data2.abilities.length; i++) {
+              const li = document.createElement("li");
+              li.textContent = data2.abilities[i].ability.name;
+              p1_abilities.appendChild(li);
             }
-            p1_img.innerHTML= ''
-            p1_poke_name.textContent =  data2.forms[0].name
+            p1_img.innerHTML = "";
+            p1_poke_name.textContent = data2.forms[0].name;
             p1_experience.textContent = data2.base_experience;
-            const img1 = document.createElement('img')
-            img1.src = data2.sprites.other.dream_world.front_default
-            p1_img.append(img1)
-        }).catch((err) => console.error(err))
+            const img1 = document.createElement("img");
+            img1.src = data2.sprites.other.dream_world.front_default;
+            p1_img.append(img1);
+          })
+          .catch((err) => console.error(err));
         fetch(data.results[number2].url)
-        .then((res2) => res2.json())
-        .then((data2) => {
-            console.log(data2)
-            p2_abilities.textContent = ''
-            for(let i =0;i<data2.abilities.length;i++){
-                const li = document.createElement('li')
-                li.textContent = data2.abilities[i].ability.name
-                p2_abilities.appendChild(li)
+          .then((res2) => res2.json())
+          .then((data2) => {
+            console.log(data2);
+            p2_abilities.textContent = "";
+            for (let i = 0; i < data2.abilities.length; i++) {
+              const li = document.createElement("li");
+              li.textContent = data2.abilities[i].ability.name;
+              p2_abilities.appendChild(li);
             }
-            p2_img.innerHTML = ''
-            p2_poke_name.textContent = data2.forms[0].name
+            p2_img.innerHTML = "";
+            p2_poke_name.textContent = data2.forms[0].name;
             p2_experience.textContent = data2.base_experience;
-            const img2 = document.createElement('img')
-            img2.src = data2.sprites.other.dream_world.front_default
-            p2_img.append(img2)
-
-        }).catch((err) => console.error(err))
+            const img2 = document.createElement("img");
+            img2.src = data2.sprites.other.dream_world.front_default;
+            p2_img.append(img2);
+          })
+          .catch((err) => console.error(err));
         p1_score.textContent = `score: ${p1score}`;
         p2_score.textContent = `score: ${p2score}`;
-        if(parseInt(p1_experience.textContent) > parseInt(p2_experience.textContent))
-        {
-            p1score++;
-            p1_score.textContent = `score: ${p1score}`;
+        if (
+          parseInt(p1_experience.textContent) >
+          parseInt(p2_experience.textContent)
+        ) {
+          p1score++;
+          p1_score.textContent = `score: ${p1score}`;
+        } else if (
+          parseInt(p1_experience.textContent) ==
+          parseInt(p2_experience.textContent)
+        ) {
+          p1_score.textContent = `score: ${p1score}`;
+          p2_score.textContent = `score: ${p2score}`;
+        } else {
+          p2score++;
+          p2_score.textContent = `score: ${p2score}`;
         }
-        else if(parseInt(p1_experience.textContent) == parseInt(p2_experience.textContent)){
-            p1_score.textContent = `score: ${p1score}`;
-            p2_score.textContent = `score: ${p2score}`;
-        }
-        else{
-            p2score++;
-            p2_score.textContent = `score: ${p2score}`;
-        }
-    }).catch((err) => console.error(err))
-})
+      })
+      .catch((err) => console.error(err));
+  }
+});
 
 
 
